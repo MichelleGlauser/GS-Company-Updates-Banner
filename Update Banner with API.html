@@ -1,0 +1,162 @@
+<!-- Update banner code using API -->
+
+<!-- HEAD TAG: -->
+
+<style>
+body {
+background-color: #ff6066;
+}
+#updates 
+{
+background-color: #fffa61;
+width: 100%;
+margin-bottom: 2px;
+webkit-animation-delay: 0s;
+webkit-animation-direction: normal;
+webkit-animation-duration: 5s;
+webkit-animation-fill-mode: none;
+webkit-animation-iteration-count: infinite;
+webkit-animation-name: animate-bg;
+webkit-animation-timing-function: linear;
+webkit-background-size: 40px 40px;
+background-attachment: scroll;
+background-clip: border-box;
+background-size: 40px 40px;
+border-style: solid;
+border-width: 1px 1px 3px 1;
+color: #ff6066;
+/* display: block; 
+-font-family: sans-serif; */
+font-size: 16px;
+text-align: center;
+font-style: normal;
+font-variant: normal;
+font-weight: normal;
+height: 21px;
+line-height: 15px;
+outline-color: black;
+overflow-y: visible;
+padding: 15px;
+text-shadow: grey 0px 1px 0px;
+vertical-align: baseline;
+}
+
+#updates a {
+color: grey;
+}
+
+#updates h3
+{
+color: grey;
+margin: 3px 0 10px 40px;
+}
+
+#updates p
+{
+margin: 0;
+}
+</style>
+
+
+
+
+<!-- HEADER HTML: -->
+
+<!-- Make the udpate banner exist. -->
+<div id="updates">
+    <h2>Loading a company update . . .</h2>
+    <ul></ul>
+</div> <!-- /container -->
+
+
+
+<!-- FOOTER HTML: -->
+
+<script type="text/javascript" language="javascript">
+var cookieName = '';
+var update = function() {
+
+    jQuery('#updates').show();
+    jQuery.ajax({
+        type: "GET",
+        url: 'http://api.getsatisfaction.com/companies/[companynamehere]/topics.json?style=update',
+        dataType : 'jsonp',
+        success: function(topics) { 
+            console.log(topics);
+            if (topics.total) {
+                    cookieName = topics.slug;
+                    var topic = topics.data[0]
+                    var elem = '<a target=_blank href="' + topic.at_sfn + '">' + "Company update: " + topic.subject; + '</a>';
+                    console.log(elem);
+                    jQuery('#updates h2').html(elem);
+            } else {
+                // What should happen with no success/no results:
+                jQuery('#updates').hide();
+            }
+
+        } 
+    });
+};
+
+jQuery(update);
+
+// Cookie to track visits to page (possible views)
+var maxVisits= 5;
+// This changes the name of the cookie so that every time there's a new update, the visit count starts over.
+document.observe("dom:loaded", function() {
+    var cookieValue = 0;
+    // If the user has cookies enabled, show the dialog.
+    if (document.cookie.split(";").length > 0)
+    {
+        // Check for existing cookie    
+        var i,x,y,ARRcookies=document.cookie.split(";");
+        for (i=0;i<ARRcookies.length;i++)
+        { 
+            x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+            y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+            x=x.replace(/^\s+|\s+$/g,"");
+            if (x==cookieName)
+            {
+                cookieValue = unescape(y);
+            }
+        }
+        jQuery('#updates').click(function(){
+          maxCookie();
+        })
+        // If none exists, set a cookie.
+        if (cookieValue == null || cookieValue == 0)
+        {
+            cookieValue = 1; 
+        }
+        document.cookie = cookieName + "=" + cookieValue + "; expires=Sat, 1 Jan 2050 20:47:11 UTC; path=/";
+        if (cookieValue < maxVisits)
+        {
+            jQuery("#updates").hide();
+            jQuery("#updates").show();
+            jQuery("#updates").fadeIn("slow");
+//            jQuery('#updates').live('click', function(e){
+//                window.open(this.href);
+//                e.preventDefault();
+//            });
+        }
+        else
+        {
+            jQuery("#updates").hide();
+        }
+    }
+    else
+    {
+        jQuery("#updates").hide();
+    }
+});
+function maxCookie()
+{
+    document.cookie = cookieName + "=" + maxVisits + "; expires=Sat, 1 Jan 2050 20:47:11 UTC; path=/";
+    jQuery("#updates").hide();
+}
+
+</script>
+
+
+
+
